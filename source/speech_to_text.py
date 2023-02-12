@@ -1,27 +1,35 @@
 import speech_recognition as sr
-import time 
 
-r = sr.Recognizer()
-r.operation_timeout = 1.8
-mic = sr.Microphone()
+class SpeechRecognition():
+    """ 
+    Wrap speech recognition in a single class. Get the recognize_google response and send it to a chatGPT
+    """
+    def __init__(self):
+        self.r = sr.Recognizer()
+        self.mic = sr.Microphone()
+        with self.mic as source:
+            self.r.adjust_for_ambient_noise(source)
 
+    def callback(self, audio):
+        try: 
+            out = self.r.recognize_google(audio)
+            return out
+        except sr.UnknownValueError: 
+            print("Jeszcze raz, nie dosłyszałem.")
+        except TimeoutError:
+            print("Wiadomość za długa na darmowe API, jeszcze raz")
 
-with mic as source:
-    r.adjust_for_ambient_noise(source)
+    def listen(self, phrase_time_limit):
+        with self.mic as s:
+            audio =""
+            while not audio:
+                try:  # listen for 1 second, then check again if the stop function has been called
+                    print("Słucham")
+                    audio = self.r.listen(s, 1, phrase_time_limit)
+                except sr.WaitTimeoutError:  # listening timed out, just try again
+                    pass
 
-out=""
-def callback(r, audio):
-    try: 
-        # with sr.Microphone() as source:
-            # print("Słucham")
-            # r.adjust_for_ambient_noise(source)
-            # audio = r.listen(source)
-            # print("analizuję")
-        out = r.recognize_google(audio)
-        print(out)
-    except sr.UnknownValueError: 
-        print("Jeszcze raz, nie dosłyszałem.")
- 
-stop_listening = r.listen_in_background(mic, callback, phrase_time_limit=3)
-
-time.sleep(100)
+            return self.callback( audio)
+    
+# srr = SpeechRecognition()
+# srr.listen(10)
