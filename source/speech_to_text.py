@@ -10,7 +10,7 @@ class SpeechRecognition():
         with self.mic as source:
             self.r.adjust_for_ambient_noise(source)
 
-    def callback(self, audio):
+    def __callback(self, audio):
         try: 
             out = self.r.recognize_google(audio)
             return out
@@ -29,7 +29,7 @@ class SpeechRecognition():
                 except sr.WaitTimeoutError:  # listening timed out, just try again
                     pass
 
-            return self.callback( audio)
+            return self.__callback( audio)
     
 # srr = SpeechRecognition()
-# srr.listen(10)
+# print(srr.listen(5))

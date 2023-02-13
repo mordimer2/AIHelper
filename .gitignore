@@ -4,6 +4,9 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 mj_env*
+selenium*
+config.ini
+tmp_*
 
 # User-specific files
 *.rsuser
